@@ -31,6 +31,8 @@ def weather():
     response = requests.get(url, params=params)
     data = response.json()
 
+    weather_main = data["weather"][0]["main"]
+
     if response.status_code != 200:
         msg = data.get("message", "Bilinmeyen hata")
         if "Invalid API key" in msg:
@@ -44,11 +46,12 @@ def weather():
     status = "Uygun" if wind < 10 else "Riskli"
 
     return jsonify({
-        "city": city_name,
-        "temperature": temp,
-        "wind_speed": wind,
-        "flight_status": status
-    })
+    "city": city_name,
+    "temperature": temp,
+    "wind_speed": wind,
+    "flight_status": status,
+    "weather_main": weather_main
+})
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -54,19 +54,53 @@
 <script>
 function getWeather() {
     const city = document.getElementById("cityInput").value;
+    const result = document.getElementById("result");
+
+    result.innerText = "Yukleniyor...";
+
+    if (!city) {
+    result.innerText = "Lutfen bir sehir gir";
+    result.style.color = "red";
+    return;
+    }
 
     fetch(`/weather?city=${city}`)
         .then(response => response.json())
         .then(data => {
             const result = document.getElementById("result");
+            const body = document.body;
 
             if (data.error) {
                 result.innerText = data.error;
-                result.className = "error";  // kırmızı yap
+                result.className = "error";
+                result.style.color = "red";
+                body.style.backgroundColor = "#f5f5f5";
             } else {
-                result.className = ""; // normal yazı
+                let icon = "";
+
+                if (data.weather_main === "Clear") {
+                    icon = "☀️";
+                    body.style.backgroundColor = "#ffe066";
+                } else if (data.weather_main === "Rain") {
+                    icon = "🌧️";
+                    body.style.backgroundColor = "#74c0fc";
+                } else if (data.weather_main === "Clouds") {
+                    icon = "☁️";
+                    body.style.backgroundColor = "#ced4da";
+                } else {
+                    body.style.backgroundColor = "#f5f5f5";
+                }
+
+                result.className = "";
+
                 result.innerText =
-                    `${data.city} | Sicaklik: ${data.temperature}°C | Ruzgar: ${data.wind_speed} | Ucus: ${data.flight_status}`;
+                    `${icon} ${data.city} | Sicaklik: ${data.temperature}°C | Ruzgar: ${data.wind_speed} | Ucus: ${data.flight_status}`;
+
+                if (data.flight_status === "Riskli") {
+                    result.style.color = "red";
+                } else {
+                    result.style.color = "black";
+                }
             }
         });
 }
